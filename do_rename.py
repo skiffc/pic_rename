@@ -3,6 +3,7 @@ import  os
 import  re
 import  sys
 import  exifread
+import  datetime
 
 fail = []
 
@@ -25,10 +26,14 @@ for root, folders, files in os.walk( sys.argv[1]):
             print '[ERROR]', f
             for t in tags:
                 if 'DateTime' in t:
-                    print '  - tag:', t, '->', tags[t]
-            print tags.keys()
+                    r = re.sub( ':', '', str(tags[t]).split()[0] ) + '_' + f
+                    break
+            else:
+                r = datetime.date.fromtimestamp( os.path.getctime( os.path.join( root, f ) ) ).strftime('%Y%m%d') + '_' + f
+            print f, r 
+            os.rename( os.path.join( root, f), os.path.join( root, r ) )
              
-            fail.append( f )
+            #fail.append( f )
 
 if fail:
     print 'FAIL:'
